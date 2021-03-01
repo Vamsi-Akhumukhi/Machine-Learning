@@ -39,8 +39,6 @@ import matplotlib.pyplot as plt
 import pandas.util.testing as tm
 ```
 
-## Loading the Data
-
 
 ```Python
 fit = pd.read_csv('/content/drive/My Drive/Machine Learning/adult_data.csv',na_values='?')
@@ -163,7 +161,6 @@ sns.heatmap(fit.isna(), cbar=True,)
 ![png](ML_Final_Project_files/ML_Final_Project_11_1.png)
 
 
-## Dropping NA values
 
 
 ```python
@@ -225,7 +222,7 @@ fit['Salary'].value_counts()
     Successfully installed heatmapz-0.0.4
 
 
-## Converting Salary to 0 and 1
+## Feature Engineering
 ```python
 # Converting Salary to 0 and 1
 salary_map={' <=50K':1,' >50K':0}
@@ -329,6 +326,7 @@ data=[fit]
 ```
 
 
+
 ```python
 for dataset in data:
     dataset.loc[dataset['native_country'] != ' United-States', 'native_country'] = 'Non-US'
@@ -339,7 +337,20 @@ for dataset in data:
 ```python
 fit
 ```
-
+|       | Age | WorkClass        | Final_weight | Education  | Education_num | Martial_status     | Occupation        | Relationship  | Race  | Sex | Capital_gain | Capital_loss | hours_per_week | native_country | Salary |
+|-------|-----|------------------|--------------|------------|---------------|--------------------|-------------------|---------------|-------|-----|--------------|--------------|----------------|----------------|--------|
+| 0     | 39  | State-gov        | 77516        | Bachelors  | 13            | Never-married      | Adm-clerical      | Not-in-family | White | 1   | 2174         | 0            | 40             | US             | 1      |
+| 1     | 50  | Self-emp-not-inc | 83311        | Bachelors  | 13            | Married-civ-spouse | Exec-managerial   | Husband       | White | 1   | 0            | 0            | 13             | US             | 1      |
+| 2     | 38  | Private          | 215646       | HS-grad    | 9             | Divorced           | Handlers-cleaners | Not-in-family | White | 1   | 0            | 0            | 40             | US             | 1      |
+| 3     | 53  | Private          | 234721       | 11th       | 7             | Married-civ-spouse | Handlers-cleaners | Husband       | Black | 1   | 0            | 0            | 40             | US             | 1      |
+| 4     | 28  | Private          | 338409       | Bachelors  | 13            | Married-civ-spouse | Prof-specialty    | Wife          | Black | 0   | 0            | 0            | 40             | Non-US         | 1      |
+| ...   | ... | ...              | ...          | ...        | ...           | ...                | ...               | ...           | ...   | ... | ...          | ...          | ...            | ...            | ...    |
+| 32556 | 27  | Private          | 257302       | Assoc-acdm | 12            | Married-civ-spouse | Tech-support      | Wife          | White | 0   | 0            | 0            | 38             | US             | 1      |
+| 32557 | 40  | Private          | 154374       | HS-grad    | 9             | Married-civ-spouse | Machine-op-inspct | Husband       | White | 1   | 0            | 0            | 40             | US             | 0      |
+| 32558 | 58  | Private          | 151910       | HS-grad    | 9             | Widowed            | Adm-clerical      | Unmarried     | White | 0   | 0            | 0            | 40             | US             | 1      |
+| 32559 | 22  | Private          | 201490       | HS-grad    | 9             | Never-married      | Adm-clerical      | Own-child     | White | 1   | 0            | 0            | 20             | US             | 1      |
+| 32560 | 52  | Self-emp-inc     | 287927       | HS-grad    | 9             | Married-civ-spouse | Exec-managerial   | Wife          | White | 0   | 15024        | 0            | 40             | US             | 0      |
+30162 rows × 15 columns
 
 
 
@@ -370,7 +381,6 @@ fit['native_country'].head(10)
 
 
 
-## Converting Martial status into numerical
 
 
 ```python
@@ -428,13 +438,22 @@ fit.Martial_status.head(10)
 
 
 
-## Converting Relationship to Numerical
 
 
 ```python
 fit[['Martial_status','Relationship','Salary']].groupby(['Relationship','Martial_status']).mean()
 ```
-
+| Relationship   | Martial_status | Salary   |
+|:--------------:|:--------------:|:--------:|
+| Husband        | 0              | 0.544331 |
+| Not-in-family  | 0              | 0.714286 |
+|                | 1              | 0.893802 |
+| Other-relative | 0              | 0.857143 |
+|                | 1              | 0.976623 |
+| Own-child      | 0              | 0.821429 |
+|                | 1              | 0.988818 |
+| Unmarried      | 1              | 0.933686 |
+| Wife           | 0              | 0.506401 |
 
 
 
@@ -460,230 +479,20 @@ fit.head(10)
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+|   | Age | WorkClass        | Final_weight | Education | Education_num | Martial_status | Occupation        | Relationship | Race  | Sex | Capital_gain | Capital_loss | hours_per_week | native_country | Salary |
+|---|-----|------------------|--------------|-----------|---------------|----------------|-------------------|--------------|-------|-----|--------------|--------------|----------------|----------------|--------|
+| 0 | 39  | State-gov        | 77516        | Bachelors | 13            | 1              | Adm-clerical      | 3            | White | 1   | 2174         | 0            | 40             | 1              | 1      |
+| 1 | 50  | Self-emp-not-inc | 83311        | Bachelors | 13            | 0              | Exec-managerial   | 2            | White | 1   | 0            | 0            | 13             | 1              | 1      |
+| 2 | 38  | Private          | 215646       | HS-grad   | 9             | 1              | Handlers-cleaners | 3            | White | 1   | 0            | 0            | 40             | 1              | 1      |
+| 3 | 53  | Private          | 234721       | 11th      | 7             | 0              | Handlers-cleaners | 2            | Black | 1   | 0            | 0            | 40             | 1              | 1      |
+| 4 | 28  | Private          | 338409       | Bachelors | 13            | 0              | Prof-specialty    | 1            | Black | 0   | 0            | 0            | 40             | 0              | 1      |
+| 5 | 37  | Private          | 284582       | Masters   | 14            | 0              | Exec-managerial   | 1            | White | 0   | 0            | 0            | 40             | 1              | 1      |
+| 6 | 49  | Private          | 160187       | 9th       | 5             | 1              | Other-service     | 3            | Black | 0   | 0            | 0            | 16             | 0              | 1      |
+| 7 | 52  | Self-emp-not-inc | 209642       | HS-grad   | 9             | 0              | Exec-managerial   | 2            | White | 1   | 0            | 0            | 45             | 1              | 0      |
+| 8 | 31  | Private          | 45781        | Masters   | 14            | 1              | Prof-specialty    | 3            | White | 0   | 14084        | 0            | 50             | 1              | 0      |
+| 9 | 42  | Private          | 159449       | Bachelors | 13            | 0              | Exec-managerial   | 2            | White | 1   | 5178         | 0            | 40             | 1              | 0      |
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>WorkClass</th>
-      <th>Final_weight</th>
-      <th>Education</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Occupation</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-      <th>Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>State-gov</td>
-      <td>77516</td>
-      <td>Bachelors</td>
-      <td>13</td>
-      <td>1</td>
-      <td>Adm-clerical</td>
-      <td>3</td>
-      <td>White</td>
-      <td>1</td>
-      <td>2174</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>Self-emp-not-inc</td>
-      <td>83311</td>
-      <td>Bachelors</td>
-      <td>13</td>
-      <td>0</td>
-      <td>Exec-managerial</td>
-      <td>2</td>
-      <td>White</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>38</td>
-      <td>Private</td>
-      <td>215646</td>
-      <td>HS-grad</td>
-      <td>9</td>
-      <td>1</td>
-      <td>Handlers-cleaners</td>
-      <td>3</td>
-      <td>White</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>53</td>
-      <td>Private</td>
-      <td>234721</td>
-      <td>11th</td>
-      <td>7</td>
-      <td>0</td>
-      <td>Handlers-cleaners</td>
-      <td>2</td>
-      <td>Black</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>28</td>
-      <td>Private</td>
-      <td>338409</td>
-      <td>Bachelors</td>
-      <td>13</td>
-      <td>0</td>
-      <td>Prof-specialty</td>
-      <td>1</td>
-      <td>Black</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>37</td>
-      <td>Private</td>
-      <td>284582</td>
-      <td>Masters</td>
-      <td>14</td>
-      <td>0</td>
-      <td>Exec-managerial</td>
-      <td>1</td>
-      <td>White</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>49</td>
-      <td>Private</td>
-      <td>160187</td>
-      <td>9th</td>
-      <td>5</td>
-      <td>1</td>
-      <td>Other-service</td>
-      <td>3</td>
-      <td>Black</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>16</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>52</td>
-      <td>Self-emp-not-inc</td>
-      <td>209642</td>
-      <td>HS-grad</td>
-      <td>9</td>
-      <td>0</td>
-      <td>Exec-managerial</td>
-      <td>2</td>
-      <td>White</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>31</td>
-      <td>Private</td>
-      <td>45781</td>
-      <td>Masters</td>
-      <td>14</td>
-      <td>1</td>
-      <td>Prof-specialty</td>
-      <td>3</td>
-      <td>White</td>
-      <td>0</td>
-      <td>14084</td>
-      <td>0</td>
-      <td>50</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>42</td>
-      <td>Private</td>
-      <td>159449</td>
-      <td>Bachelors</td>
-      <td>13</td>
-      <td>0</td>
-      <td>Exec-managerial</td>
-      <td>2</td>
-      <td>White</td>
-      <td>1</td>
-      <td>5178</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 x=fit['hours_per_week']
 plt.hist(x,bins=None,density=True,histtype='bar',color = 'lime')
 plt.show()
@@ -693,81 +502,31 @@ plt.show()
 ![png](ML_Final_Project_files/ML_Final_Project_36_0.png)
 
 
-# Analyzing Race
 
 
-
-```
+```python
 fit[['Race','Salary']].groupby('Race').mean()
 ```
 
+| Race               | Salary   |
+|:------------------:|:--------:|
+| Amer-Indian-Eskimo | 0.881119 |
+| Asian-Pac-Islander | 0.722905 |
+| Black              | 0.870075 |
+| Other              | 0.909091 |
+| White              | 0.736282 |
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Salary</th>
-    </tr>
-    <tr>
-      <th>Race</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Amer-Indian-Eskimo</th>
-      <td>0.881119</td>
-    </tr>
-    <tr>
-      <th>Asian-Pac-Islander</th>
-      <td>0.722905</td>
-    </tr>
-    <tr>
-      <th>Black</th>
-      <td>0.870075</td>
-    </tr>
-    <tr>
-      <th>Other</th>
-      <td>0.909091</td>
-    </tr>
-    <tr>
-      <th>White</th>
-      <td>0.736282</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 race_map={' White':0,' Amer-Indian-Eskimo':1,' Asian-Pac-Islander':2,' Black':3,' Other':4}
 ```
 
 
-```
+```python
 fit['Race']= fit['Race'].map(race_map)
 ```
 
 
-```
+```Python
 fit.Race.head(10)
 ```
 
@@ -789,7 +548,7 @@ fit.Race.head(10)
 
 
 
-```
+```Python
 fit.drop(labels=['WorkClass','Final_weight','Education','Occupation'],axis=1,inplace=True)
 fit.head(10)
 ```
@@ -797,186 +556,21 @@ fit.head(10)
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-      <th>Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>2174</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>38</td>
-      <td>9</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>53</td>
-      <td>7</td>
-      <td>0</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>28</td>
-      <td>13</td>
-      <td>0</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>37</td>
-      <td>14</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>49</td>
-      <td>5</td>
-      <td>1</td>
-      <td>3</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>16</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>52</td>
-      <td>9</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>31</td>
-      <td>14</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>14084</td>
-      <td>0</td>
-      <td>50</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>42</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>5178</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country | Salary |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|--------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 2174         | 0            | 40             | 1              | 1      |
+| 1 | 50  | 13            | 0              | 2            | 0    | 1   | 0            | 0            | 13             | 1              | 1      |
+| 2 | 38  | 9             | 1              | 3            | 0    | 1   | 0            | 0            | 40             | 1              | 1      |
+| 3 | 53  | 7             | 0              | 2            | 3    | 1   | 0            | 0            | 40             | 1              | 1      |
+| 4 | 28  | 13            | 0              | 1            | 3    | 0   | 0            | 0            | 40             | 0              | 1      |
+| 5 | 37  | 14            | 0              | 1            | 0    | 0   | 0            | 0            | 40             | 1              | 1      |
+| 6 | 49  | 5             | 1              | 3            | 3    | 0   | 0            | 0            | 16             | 0              | 1      |
+| 7 | 52  | 9             | 0              | 2            | 0    | 1   | 0            | 0            | 45             | 1              | 0      |
+| 8 | 31  | 14            | 1              | 3            | 0    | 0   | 14084        | 0            | 50             | 1              | 0      |
+| 9 | 42  | 13            | 0              | 2            | 0    | 1   | 5178         | 0            | 40             | 1              | 0      |
 
 
-
-
-```
+```python
 x=fit['Capital_loss']
 plt.hist(x,bins=None,color = 'lime')
 plt.show()
@@ -986,213 +580,39 @@ plt.show()
 ![png](ML_Final_Project_files/ML_Final_Project_43_0.png)
 
 
-
-```
+```Python
 # Converting Capital gain to Numeric
 fit.loc[(fit['Capital_gain'] > 0),'Capital_gain'] = 1
 fit.loc[(fit['Capital_gain'] == 0 ,'Capital_gain')]= 0
 ```
 
 
-```
+```Python
 # Converting Capital Loss to Numeric
 fit.loc[(fit['Capital_loss'] > 0),'Capital_loss'] = 1
 fit.loc[(fit['Capital_loss'] == 0 ,'Capital_loss')]= 0
-```
-
-
-```
 fit.head(10)
 ```
 
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country | Salary |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|--------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              | 1      |
+| 1 | 50  | 13            | 0              | 2            | 0    | 1   | 0            | 0            | 13             | 1              | 1      |
+| 2 | 38  | 9             | 1              | 3            | 0    | 1   | 0            | 0            | 40             | 1              | 1      |
+| 3 | 53  | 7             | 0              | 2            | 3    | 1   | 0            | 0            | 40             | 1              | 1      |
+| 4 | 28  | 13            | 0              | 1            | 3    | 0   | 0            | 0            | 40             | 0              | 1      |
+| 5 | 37  | 14            | 0              | 1            | 0    | 0   | 0            | 0            | 40             | 1              | 1      |
+| 6 | 49  | 5             | 1              | 3            | 3    | 0   | 0            | 0            | 16             | 0              | 1      |
+| 7 | 52  | 9             | 0              | 2            | 0    | 1   | 0            | 0            | 45             | 1              | 0      |
+| 8 | 31  | 14            | 1              | 3            | 0    | 0   | 1            | 0            | 50             | 1              | 0      |
+| 9 | 42  | 13            | 0              | 2            | 0    | 1   | 1            | 0            | 40             | 1              | 0      |
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-      <th>Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>38</td>
-      <td>9</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>53</td>
-      <td>7</td>
-      <td>0</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>28</td>
-      <td>13</td>
-      <td>0</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>37</td>
-      <td>14</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>49</td>
-      <td>5</td>
-      <td>1</td>
-      <td>3</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>16</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>52</td>
-      <td>9</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>31</td>
-      <td>14</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>50</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>42</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 from heatmap import heatmap, corrplot
 ```
 
 
-```
+```python
 plt.figure(figsize=(8, 8))
 corrplot(fit.corr(), size_scale=300);
 ```
@@ -1210,7 +630,7 @@ corrplot(fit.corr(), size_scale=300);
 
 
 
-```
+```python
 import statsmodels.api as sm
 from math import exp
 import scipy.optimize as opt
@@ -1222,310 +642,76 @@ from sklearn.utils import shuffle
 ```
 
 
-```
+```python
 x = fit.copy()
 ```
 
 
-```
+```python
 x.drop(['Salary'],axis=1,inplace=True)
 ```
 
 
-```
+```python
 x
 ```
+|       | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country |
+|-------|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|
+| 0     | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
+| 1     | 50  | 13            | 0              | 2            | 0    | 1   | 0            | 0            | 13             | 1              |
+| 2     | 38  | 9             | 1              | 3            | 0    | 1   | 0            | 0            | 40             | 1              |
+| 3     | 53  | 7             | 0              | 2            | 3    | 1   | 0            | 0            | 40             | 1              |
+| 4     | 28  | 13            | 0              | 1            | 3    | 0   | 0            | 0            | 40             | 0              |
+| ...   | ... | ...           | ...            | ...          | ...  | ... | ...          | ...          | ...            | ...            |
+| 32556 | 27  | 12            | 0              | 1            | 0    | 0   | 0            | 0            | 38             | 1              |
+| 32557 | 40  | 9             | 0              | 2            | 0    | 1   | 0            | 0            | 40             | 1              |
+| 32558 | 58  | 9             | 1              | 0            | 0    | 0   | 0            | 0            | 40             | 1              |
+| 32559 | 22  | 9             | 1              | 4            | 0    | 1   | 0            | 0            | 20             | 1              |
+| 32560 | 52  | 9             | 0              | 1            | 0    | 0   | 1            | 0            | 40             | 1              |
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>38</td>
-      <td>9</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>53</td>
-      <td>7</td>
-      <td>0</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>28</td>
-      <td>13</td>
-      <td>0</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>32556</th>
-      <td>27</td>
-      <td>12</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>38</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32557</th>
-      <td>40</td>
-      <td>9</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32558</th>
-      <td>58</td>
-      <td>9</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32559</th>
-      <td>22</td>
-      <td>9</td>
-      <td>1</td>
-      <td>4</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>20</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32560</th>
-      <td>52</td>
-      <td>9</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-<p>30162 rows × 10 columns</p>
-</div>
 
 
-
-
-```
+```python
 y=fit.copy()
 ```
 
 
-```
+```python
 y.drop(['Age','Education_num','Martial_status','Relationship','Race','Sex','Capital_gain',
         'Capital_loss','hours_per_week','native_country'],axis=1,inplace=True)
-```
-
-
-```
 y
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>32556</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32557</th>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>32558</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32559</th>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>32560</th>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-<p>30162 rows × 1 columns</p>
-</div>
+          Salary
+    0	    1
+    1	    1
+    2	    1
+    3	    1
+    4	    1
+    ...	  ...
+    32556	1
+    32557	0
+    32558	1
+    32559	1
+    32560	0
+30162 rows × 1 columns
 
 
 
-Normalization
+## Normalization
 
 
-```
+```python
 from sklearn import preprocessing
 
 # Data Normalization
 normalized_X = preprocessing.scale(x)
 X= normalized_X # Normalised Data
 X= np.asarray(X)
-```
-
-
-```
 X
 ```
 
@@ -1549,7 +735,7 @@ X
 
 
 
-```
+```python
 y=np.asarray(y)
 y
 ```
@@ -1568,12 +754,8 @@ y
 
 
 
-```
+```python
 X=np.hstack(((np.ones(len(X))).reshape(-1,1),X))
-```
-
-
-```
 X
 ```
 
@@ -1597,14 +779,10 @@ X
 
 
 
-```
+```python
 X_train,X_test,y_train,y_test = train_test_split(X,y,
                                                 test_size=0.25,
                                                 random_state=42)
-```
-
-
-```
 len(X_train), len(X_test)
 ```
 
@@ -1616,7 +794,7 @@ len(X_train), len(X_test)
 
 
 
-```
+```python
 def compute_cost(W, X, Y):
     # calculate hinge loss
     N = X.shape[0]
@@ -1630,7 +808,7 @@ def compute_cost(W, X, Y):
 ```
 
 
-```
+```python
 def calculate_cost_gradient(W, X_batch, Y_batch):
     # if only one example is passed (eg. in case of SGD)
     if type(Y_batch) == np.float64:
@@ -1652,7 +830,7 @@ def calculate_cost_gradient(W, X_batch, Y_batch):
 ```
 
 
-```
+```python
 def sgd(features, outputs):
     max_epochs = 100
     weights = np.array([0,0,0,0,0,0,0,0,0,0,0])
@@ -1682,13 +860,13 @@ def sgd(features, outputs):
 ```
 
 
-```
+```python
 regularization_strength = 100
 learning_rate = 0.5
 ```
 
 
-```
+```python
 # Training the model
 W,J_history=sgd(X_train,y_train)
 ```
@@ -1704,7 +882,7 @@ W,J_history=sgd(X_train,y_train)
 
 
 
-```
+```python
 W
 ```
 
@@ -1716,7 +894,7 @@ W
 
 
 
-```
+```python
 print("training the model...")
 y_train_predicted = np.array([])
 for i in range(X_train.shape[0]):
@@ -1728,7 +906,7 @@ for i in range(X_train.shape[0]):
 
 
 
-```
+```python
 y_train_predicted
 ```
 
@@ -1740,7 +918,7 @@ y_train_predicted
 
 
 
-```
+```python
 y_test_predicted = np.array([])
 for i in range(X_test.shape[0]):
     yp = np.sign(np.dot(X_test[i], W))
@@ -1748,7 +926,7 @@ for i in range(X_test.shape[0]):
 ```
 
 
-```
+```python
 print("accuracy on test dataset: {}".format(accuracy_score(y_test, y_test_predicted)))
 ```
 
@@ -1756,24 +934,24 @@ print("accuracy on test dataset: {}".format(accuracy_score(y_test, y_test_predic
 
 
 
-```
+```python
 from sklearn.metrics import confusion_matrix
 ```
 
 
-```
+```python
 cm = confusion_matrix(y_test, y_test_predicted, labels=None, sample_weight=None, normalize=None)
 ```
 
 
-```
+```python
 #converting y_test to one dimension
 abc = np.array(y_test).ravel()
 abc = np.ndarray.tolist(abc)
 ```
 
 
-```
+```python
 data = {'y_Actual':    abc,
         'y_Predicted': y_test_predicted.tolist()
         }
@@ -1793,71 +971,36 @@ plt.show()
 
 
 
-```
+```python
 confusion_matrix
 ```
 
 
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Predicted</th>
-      <th>-1.0</th>
-      <th>1.0</th>
-    </tr>
-    <tr>
-      <th>Actual</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>82</td>
-      <td>1797</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1971</td>
-      <td>3691</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+| Predicted/Actual | -1.0 | 1.0  |
+|-----------|------|------|
+|           |      |      |
+| 0         | 82   | 1797 |
+| 1         | 1971 | 3691 |
 
 
 
-
-```
+```python
 from sklearn.svm import LinearSVC
 classifier = LinearSVC()
 classifier.fit(X_train,y_train)
 y_score = classifier.decision_function(X_test)
 ```
 
-    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning:
+    A column-vector y was passed when a 1d array was expected.
+    Please change the shape of y to (n_samples, ), for example using ravel().
       y = column_or_1d(y, warn=True)
 
 
 
-```
+```python
 from sklearn.metrics import average_precision_score
 average_precision = average_precision_score(y_test,y_score)
 
@@ -1867,13 +1010,13 @@ print('Average Precision-Recall score : {0:0.2f}'.format(average_precision))
     Average Precision-Recall score : 0.95
 
 
-
-```
+## PCA
+```python
 from sklearn.decomposition import PCA
 ```
 
 
-```
+```python
 pca = PCA(n_components=2)
 principalComponents = pca.fit_transform(X)
 principalDf = pd.DataFrame(data = principalComponents
@@ -1881,7 +1024,7 @@ principalDf = pd.DataFrame(data = principalComponents
 ```
 
 
-```
+```python
 principalDf
 ```
 
@@ -1899,23 +1042,21 @@ principalDf
 
 
 
-```
+```python
 principalDf = np.asarray(principalDf)
 ```
 
 
-```
+```python
 from sklearn.svm import SVC
 model = SVC(kernel='linear', C=100,coef0=13.19098827)
 model.fit(principalDf[0:22621], y[0:22621])
 ```
 
-    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning:
+    A column-vector y was passed when a 1d array was expected.
+    Please change the shape of y to (n_samples, ), for example using ravel().
       y = column_or_1d(y, warn=True)
-
-
-
-
 
     SVC(C=100, break_ties=False, cache_size=200, class_weight=None,
         coef0=13.19098827, decision_function_shape='ovr', degree=3, gamma='scale',
@@ -1924,8 +1065,8 @@ model.fit(principalDf[0:22621], y[0:22621])
 
 
 
-
-```
+## SVM on Training Dataset
+```python
 ax = plt.gca()
 color = ['green' if c == 0 else 'red' for c in y[0:22621]]
 plt.scatter(principalDf[0:22621, 0], principalDf[0:22621, 1], c=color)
@@ -1954,18 +1095,15 @@ plt.show()
 
 
 
-```
+```python
 
 model = SVC(kernel='linear', C=100,coef0=13.19098827)
 model.fit(principalDf[22621:], y[22621:])
 ```
 
-    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
+    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning: A column-vector y was passed when a 1d array was expected.
+    Please change the shape of y to (n_samples, ), for example using ravel().
       y = column_or_1d(y, warn=True)
-
-
-
-
 
     SVC(C=100, break_ties=False, cache_size=200, class_weight=None,
         coef0=13.19098827, decision_function_shape='ovr', degree=3, gamma='scale',
@@ -1974,8 +1112,8 @@ model.fit(principalDf[22621:], y[22621:])
 
 
 
-
-```
+## SVM on Testing Dataset
+```python
 ax = plt.gca()
 color = ['green' if c == 0 else 'red' for c in y[22621:]]
 plt.scatter(principalDf[22621:, 0], principalDf[22621:, 1], c=color)
@@ -2003,10 +1141,10 @@ plt.show()
 ![png](ML_Final_Project_files/ML_Final_Project_90_0.png)
 
 
-# Logistic regression
+## Logistic regression
 
 
-```
+```python
 X
 ```
 
@@ -2030,7 +1168,7 @@ X
 
 
 
-```
+```python
 m , n = X.shape[0], X.shape[1]
 X= np.append(np.ones((m,1)),X,axis=1)
 X
@@ -2056,24 +1194,22 @@ X
 
 
 
-```
+```python
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 ```
 
 
-```
+```python
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 logreg = LogisticRegression()
 logreg.fit(X_train, y_train)
 ```
 
-    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning: A column-vector y was passed when a 1d array was expected. Please change the shape of y to (n_samples, ), for example using ravel().
-      y = column_or_1d(y, warn=True)
-
-
-
-
+    /usr/local/lib/python3.6/dist-packages/sklearn/utils/validation.py:760: DataConversionWarning:
+    A column-vector y was passed when a 1d array was expected.
+    Please change the shape of y to (n_samples, ),
+    for example using ravel().y = column_or_1d(y, warn=True)
 
     LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
                        intercept_scaling=1, l1_ratio=None, max_iter=100,
@@ -2084,13 +1220,13 @@ logreg.fit(X_train, y_train)
 
 
 
-```
+```python
 def sigmoid(z):
     return 1/ (1 + np.exp(-z))
 ```
 
 
-```
+```python
 def costFunction(theta, X, y):
 
     m=len(y)
@@ -2105,7 +1241,7 @@ def costFunction(theta, X, y):
 ```
 
 
-```
+```python
 def gradientDescent(X,y,theta,alpha,num_iters):  
     m=len(y)
     J_history =[]
@@ -2119,12 +1255,12 @@ def gradientDescent(X,y,theta,alpha,num_iters):
 ```
 
 
-```
+```python
 theta_result,cost_history=gradientDescent(X_train,y_train,initial_theta,alpha=0.5,num_iters=1000)
 ```
 
 
-```
+```python
 theta_result
 ```
 
@@ -2146,7 +1282,7 @@ theta_result
 
 
 
-```
+```python
 %matplotlib inline
 import matplotlib.pyplot as plt
 fig = plt.figure(figsize = (14,7))
@@ -2169,12 +1305,8 @@ ax.set_title('Cost History vs Number of Iterations')
 
 
 
-```
+```python
 initial_theta= np.array([0, 0, 0,0,0,0,0,0,0,0,0]).reshape(-1,1)
-```
-
-
-```
 initial_theta
 ```
 
@@ -2196,13 +1328,13 @@ initial_theta
 
 
 
-```
+```python
 for i in range(len(X)):
     z = sigmoid(np.dot(X,theta_result))
 ```
 
 
-```
+```python
 initial_theta = np.zeros((n+1,1))
 cost, grad= costFunction(initial_theta,X,y)
 print("Cost of initial theta is",cost)
@@ -2210,30 +1342,7 @@ print("Gradient at initial theta (zeros):",grad)
 ```
 
 
-    ---------------------------------------------------------------------------
-
-    TypeError                                 Traceback (most recent call last)
-
-    <ipython-input-83-0725c2976d2a> in <module>()
-          1 initial_theta = np.zeros((n+1,1))
-    ----> 2 cost, grad= costFunction(initial_theta,X,y)
-          3 print("Cost of initial theta is",cost)
-          4 print("Gradient at initial theta (zeros):",grad)
-
-
-    <ipython-input-76-e1f07cf3b698> in costFunction(theta, X, y)
-          5     predictions = sigmoid(np.dot(X,theta))
-          6     error = (-y * np.log(predictions)) - ((1-y)*np.log(1-predictions))
-    ----> 7     cost = 1/m * sum(error)
-          8
-          9     grad = 1/m * np.dot(X.transpose(),(predictions - y))
-
-
-    TypeError: unsupported operand type(s) for +: 'int' and 'str'
-
-
-
-```
+```python
 def classifierPredict(theta,X):
     predictions = X.dot(theta)
 
@@ -2241,7 +1350,7 @@ def classifierPredict(theta,X):
 ```
 
 
-```
+```python
 p=classifierPredict(theta_result,X_test)
 print("Test Accuracy:", sum(p==y_test)[0])
 ```
@@ -2250,7 +1359,7 @@ print("Test Accuracy:", sum(p==y_test)[0])
 
 
 
-```
+```python
 len(y_test)
 ```
 
@@ -2265,12 +1374,12 @@ len(y_test)
 
 
 
-```
+```python
 newdata = fit.copy()
 ```
 
 
-```
+```python
 abc = newdata[:10]
 abc.drop (['Salary'],axis=1,inplace=True)
 ```
@@ -2283,417 +1392,71 @@ abc.drop (['Salary'],axis=1,inplace=True)
 
 
 
-```
+```python
 abc
 ```
 
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
+| 1 | 50  | 13            | 0              | 2            | 0    | 1   | 0            | 0            | 13             | 1              |
+| 2 | 38  | 9             | 1              | 3            | 0    | 1   | 0            | 0            | 40             | 1              |
+| 3 | 53  | 7             | 0              | 2            | 3    | 1   | 0            | 0            | 40             | 1              |
+| 4 | 28  | 13            | 0              | 1            | 3    | 0   | 0            | 0            | 40             | 0              |
+| 5 | 37  | 14            | 0              | 1            | 0    | 0   | 0            | 0            | 40             | 1              |
+| 6 | 49  | 5             | 1              | 3            | 3    | 0   | 0            | 0            | 16             | 0              |
+| 7 | 52  | 9             | 0              | 2            | 0    | 1   | 0            | 0            | 45             | 1              |
+| 8 | 31  | 14            | 1              | 3            | 0    | 0   | 1            | 0            | 50             | 1              |
+| 9 | 42  | 13            | 0              | 2            | 0    | 1   | 1            | 0            | 40             | 1              |
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>38</td>
-      <td>9</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>53</td>
-      <td>7</td>
-      <td>0</td>
-      <td>2</td>
-      <td>3</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>28</td>
-      <td>13</td>
-      <td>0</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>37</td>
-      <td>14</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>49</td>
-      <td>5</td>
-      <td>1</td>
-      <td>3</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>16</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>52</td>
-      <td>9</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>45</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>31</td>
-      <td>14</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>50</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>42</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 abc = abc[:2]
 abc
 ```
 
 
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
+| 1 | 50  | 13            | 0              | 2            | 0    | 1   | 0            | 0            | 13             | 1              |
 
 
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>13</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 dummy1  = abc.head(1).copy()
 ```
 
 
-```
+```python
 dummy2 = abc.head(1).copy()
 ```
 
 
-```
+```python
 dummy1 = dummy1.append(dummy2,ignore_index=True)
 ```
 
 
-```
+```python
 dummy1
 ```
 
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
+| 1 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 dummy1.loc[[1],'Education_num'] = 1
-
-```
-
-
-```
 dummy1
 ```
 
 
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
+| 1 | 39  | 1             | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
 
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>39</td>
-      <td>1</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 abc.loc[[0],'Education_num'] = 13
 ```
 
@@ -2710,83 +1473,22 @@ abc.loc[[0],'Education_num'] = 13
 
 
 
-```
+```python
 abc
 ```
 
 
+|   | Age | Education_num | Martial_status | Relationship | Race | Sex | Capital_gain | Capital_loss | hours_per_week | native_country |
+|---|-----|---------------|----------------|--------------|------|-----|--------------|--------------|----------------|----------------|
+| 0 | 39  | 13            | 1              | 3            | 0    | 1   | 1            | 0            | 40             | 1              |
+| 1 | 50  | 4             | 0              | 2            | 0    | 1   | 0            | 0            | 13             | 1              |
 
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Age</th>
-      <th>Education_num</th>
-      <th>Martial_status</th>
-      <th>Relationship</th>
-      <th>Race</th>
-      <th>Sex</th>
-      <th>Capital_gain</th>
-      <th>Capital_loss</th>
-      <th>hours_per_week</th>
-      <th>native_country</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>39</td>
-      <td>13</td>
-      <td>1</td>
-      <td>3</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>40</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>50</td>
-      <td>4</td>
-      <td>0</td>
-      <td>2</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>13</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-
-```
+```python
 abc= np.array(abc)
 ```
 
 
-```
+```python
 abc
 ```
 
@@ -2799,7 +1501,7 @@ abc
 
 
 
-```
+```python
 #standardizing abc
 from sklearn.datasets import load_iris
 from sklearn import preprocessing
@@ -2812,7 +1514,7 @@ x1= np.asarray(x1)
 ```
 
 
-```
+```python
 x1
 ```
 
@@ -2825,7 +1527,7 @@ x1
 
 
 
-```
+```python
 y1 = y[0:2]
 y1
 ```
@@ -2839,13 +1541,13 @@ y1
 
 
 
-```
+```python
 x1=np.hstack(((np.ones(len(x1))).reshape(-1,1),x1))
 x1 = np.asarray(x1)
 ```
 
 
-```
+```python
 x1
 ```
 
@@ -2858,13 +1560,13 @@ x1
 
 
 
-```
+```python
 for i in range(len(x1)):
     z = sigmoid(np.dot(x1,theta_result))
 ```
 
 
-```
+```python
 z
 ```
 
@@ -2877,7 +1579,7 @@ z
 
 
 
-```
+```python
  1-z
 ```
 
@@ -2886,10 +1588,3 @@ z
 
     array([[0.28213996],
            [0.05720651]])
-
-
-
-
-```
-
-```
