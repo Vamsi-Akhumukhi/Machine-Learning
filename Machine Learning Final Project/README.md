@@ -1,12 +1,4 @@
----
-title: "Machine Learning Algorithms (SVM, Log Regression and SGD) on Adult Dataset"
-date: 2020-09-05T00:58:26-04:00
-draft: false
-categories: ["Projects"]
-tags: ["Linear Regression", "SVM" , "SGD"]
-description: "The aim of the following Project is to predict whether income of a person exceeds
-$50K/year based on Adult dataset .
-"
+
 
 ---
 The aim of the following Project is to predict whether income of a person exceeds
